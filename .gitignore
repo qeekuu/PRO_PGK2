@@ -31,5 +31,6 @@
 *.exe
 *.out
 *.app
+*.sh
 
 
