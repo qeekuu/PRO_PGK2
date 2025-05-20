@@ -31,6 +31,7 @@ public:
     sf::Sprite getSprite();
 private:
     int             hp{ 100 };
+	int				armor { 1 };
     sf::Texture     texture;
     sf::Sprite      sprite{ texture };
     DIR             direction{ DIR::DOWN };
@@ -41,4 +42,5 @@ private:
     float           speed = { 4.f };
     std::vector<std::unique_ptr<MagicAttack>> MagickAttacks;
     float           attackLifeTime{ 2.f };
+	float			playerDamage { 2.0f };
 };

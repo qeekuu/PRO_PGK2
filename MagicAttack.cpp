@@ -83,3 +83,8 @@ unsigned int MagicAttack::getDamage()
 {
     return this->damage;
 }
+
+void MagicAttack::setDamage(float value)
+{
+	this->damage = value;
+}

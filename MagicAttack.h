@@ -12,6 +12,7 @@ public:
     bool isExpired(float maxLifeTime);
     sf::FloatRect getBoundingBox();
     unsigned int getDamage();
+	void setDamage(float value);
 private:
     unsigned int    damage{ 2 };
     sf::Texture     texture;

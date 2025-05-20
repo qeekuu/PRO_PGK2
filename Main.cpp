@@ -1,4 +1,8 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Text.hpp>
+#include <SFML/Window/Event.hpp>
+#include <SFML/Window/Keyboard.hpp>
+#include <SFML/Window/Mouse.hpp>
 #include <cmath>
 #include "Player.h"
 #include "Enemy.h"
@@ -11,11 +15,15 @@ int main()
     enum class GameState 
     { 
         Playing, 
-        GameOver 
+        GameOver,
+		Inventory,
+		WaveUpgrade
     };
     sf::Vector2u wSize{ 800, 600 };
     sf::RenderWindow window(sf::VideoMode(wSize),"GRA");
     window.setVerticalSyncEnabled(true);
+	
+	unsigned int waveCounter = 0;
 
     GameState gameState = GameState::Playing;
     std::unique_ptr<Player> player = std::make_unique<Player>(window.getSize());
@@ -59,6 +67,18 @@ int main()
     damageDealthMonster.setFillColor(sf::Color::White);
 
 
+	sf::Text inventoryTestScreen(font);
+	inventoryTestScreen.setCharacterSize(16);
+	inventoryTestScreen.setFillColor(sf::Color::Red);
+	inventoryTestScreen.setString("inventoryHUDTest");
+	inventoryTestScreen.setPosition({300,200});
+
+
+	sf::Text WaveUpgradeTestScreen(font);
+	WaveUpgradeTestScreen.setCharacterSize(16);
+	WaveUpgradeTestScreen.setFillColor(sf::Color::Red);
+	WaveUpgradeTestScreen.setString("WaveUpgrade_TEST");
+	WaveUpgradeTestScreen.setPosition({300,200});
     waveTime.start();
     while (window.isOpen())
     {
@@ -86,6 +106,16 @@ int main()
                     waveTime.restart();
                     gameState = GameState::Playing;
                 }
+
+				if(gameState == GameState::Playing && keyPressed->scancode == sf::Keyboard::Scancode::I)
+				{
+					gameState = GameState::Inventory;
+				}else if(gameState == GameState::Inventory && keyPressed->scancode == sf::Keyboard::Scancode::I)
+				{
+					gameState = GameState::Playing;
+				}
+
+				
             }
             else if (auto* mb = event->getIf<sf::Event::MouseButtonPressed>())
             {
@@ -96,6 +126,7 @@ int main()
                         player->attackStart(sf::Mouse::getPosition(window), player->getPosition());
                     }
                 }
+
             }
         }
 
@@ -106,7 +137,6 @@ int main()
             {
                 Flys.push_back(std::make_unique<Fly>());
                 waveTime.restart();
-
             }
 
 
@@ -196,6 +226,7 @@ int main()
                 {
 
                     Flys.erase(Flys.begin() + i);
+					waveCounter++;
                 }
             }
             //end game section
@@ -203,6 +234,12 @@ int main()
             {
                 gameState = GameState::GameOver;
             }
+			
+
+			if(waveCounter > 10)
+			{
+				gameState = GameState::WaveUpgrade;
+			}
         }
         //Drawing section
         window.clear(sf::Color::Black);
@@ -234,10 +271,24 @@ int main()
                 showDamageTextMonster = false;
             }
         }
-        else
+        else if(gameState == GameState::GameOver)
         {
             window.draw(gameOverText);
         }
+		else if(gameState == GameState::Inventory)
+		{
+			window.draw(inventoryTestScreen);
+			player->draw(window);
+            for (int i = 0;i < Flys.size(); i++)
+            {
+                Flys[i]->draw(window);
+            }
+			player->attackDraw(window);	
+		}else if(gameState == GameState::WaveUpgrade)
+		{
+			window.draw(WaveUpgradeTestScreen);
+		}
+
 
         window.display();
     }
