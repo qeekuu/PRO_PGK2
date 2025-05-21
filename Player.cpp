@@ -1,7 +1,5 @@
 #include "Player.h"
-#include <iostream>
-#include <algorithm>
-
+#include "Items.h"
 Player::Player(sf::Vector2u windowSize)
 {
     if (!texture.loadFromFile("PLAYER_SPRITE.png"))
@@ -15,6 +13,7 @@ Player::Player(sf::Vector2u windowSize)
     sprite.setOrigin({ 16.f, 16.f });
     sprite.setPosition({ windowSize.x * 0.5f,windowSize.y * 0.5f });
     animationClock.restart();
+    EQ = Inventory();
 }
 
 void Player::draw(sf::RenderWindow& window)
@@ -83,6 +82,7 @@ void Player::attackStart(sf::Vector2i mousePos,sf::Vector2f playerPos)
 {
     std::unique_ptr<MagicAttack> attack = std::make_unique<MagicAttack>();
     attack->start(mousePos, playerPos);
+    attack->setDamage(this->playerDamage);
     MagickAttacks.push_back(std::move(attack));
 }
 
@@ -92,6 +92,16 @@ void Player::attackDraw(sf::RenderWindow& window)
     {
         MagickAttacks[i]->draw(window);
     }
+}
+
+void Player::drawEQ(sf::RenderWindow& window)
+{
+    EQ.draw(window);
+}
+
+Inventory &Player::getInventory()
+{
+    return this->EQ;
 }
 
 float Player::getSpeed()
@@ -124,7 +134,7 @@ void Player::setHp(unsigned int damage)
     this->hp = hp - damage;
 }
 
-int Player::getHp()
+float Player::getHp()
 {
     return this->hp;
 }
@@ -132,4 +142,50 @@ int Player::getHp()
 sf::Sprite Player::getSprite()
 {
     return this->sprite;
+}
+
+
+std::map<EquipmentType, std::unique_ptr<Items>> &Player::getEquipment()
+{
+    return this->playerEQ;
+}
+
+void Player::setDamage(float value)
+{
+    this->playerDamage += value;
+}
+
+void Player::setArmor(float value)
+{
+    this->armor += value;
+}
+
+void Player::setLevel(float value)
+{
+    this->level += value;
+}
+
+void Player::setTreshold(float value)
+{
+    this->characterLevelTreshold += value;
+}
+
+int Player::getLevel()
+{
+    return this->level;
+}
+
+int Player::getTreshold()
+{
+    return this->characterLevelTreshold;
+}
+
+float Player::getXp()
+{
+    return this->xp;
+}
+
+void Player::setXp(float value)
+{
+    this->xp += value;
 }

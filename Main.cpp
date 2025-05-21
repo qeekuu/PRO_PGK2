@@ -9,7 +9,10 @@
 #include "Fly.h"
 #include <vector>
 #include <iostream>
-
+#include "Items.h"
+#include "MagicWand.h"
+#include "EmptyItemSlot.h"
+#include "Inventory.h"
 int main()
 {
     enum class GameState 
@@ -22,22 +25,24 @@ int main()
     sf::Vector2u wSize{ 800, 600 };
     sf::RenderWindow window(sf::VideoMode(wSize),"GRA");
     window.setVerticalSyncEnabled(true);
-	
 	unsigned int waveCounter = 0;
+
+    std::vector<std::unique_ptr<Items>> globalMapItems;
 
     GameState gameState = GameState::Playing;
     std::unique_ptr<Player> player = std::make_unique<Player>(window.getSize());
+    Inventory& inv = player->getInventory();
     DIR direction = player->getPlayerDirection();
     std::vector<std::unique_ptr<Enemy>> Flys;
     sf::Clock waveTime;
-
+  
     sf::Clock damageTextClock;
     const float damageDisplayDuration = 0.1f; 
     int lastDamage = 0;
     bool showDamageText = false;
 
     sf::Clock damageTextClockMonster;
-    int lastDamageMonster = 0;
+    float lastDamageMonster = 0;
     bool showDamageTextMonster = false;
 
 
@@ -79,6 +84,21 @@ int main()
 	WaveUpgradeTestScreen.setFillColor(sf::Color::Red);
 	WaveUpgradeTestScreen.setString("WaveUpgrade_TEST");
 	WaveUpgradeTestScreen.setPosition({300,200});
+
+    sf::RectangleShape expBar(sf::Vector2f(400, 16));
+    expBar.setPosition({300,5});
+    expBar.setFillColor(sf::Color(80, 80, 80));
+    expBar.setOutlineThickness(1);
+    expBar.setOutlineColor(sf::Color(150, 150, 150));
+
+    float expBarCounterFloat = 0;
+    sf::RectangleShape expBarCounter(sf::Vector2f(expBarCounterFloat, 16));
+    expBarCounter.setPosition({ 300,5 });
+    expBarCounter.setFillColor(sf::Color(0, 0, 255));
+    expBarCounter.setOutlineThickness(1);
+    expBarCounter.setOutlineColor(sf::Color(150, 150, 150));
+    
+
     waveTime.start();
     while (window.isOpen())
     {
@@ -115,6 +135,16 @@ int main()
 					gameState = GameState::Playing;
 				}
 
+                if (gameState == GameState::Inventory) {
+                    // W/S/A/D
+                    if (keyPressed->scancode == sf::Keyboard::Scancode::W) inv.moveSelection(-1, 0);
+                    else if (keyPressed->scancode == sf::Keyboard::Scancode::S) inv.moveSelection(1, 0);
+                    else if (keyPressed->scancode == sf::Keyboard::Scancode::A) inv.moveSelection(0, -1);
+                    else if (keyPressed->scancode == sf::Keyboard::Scancode::D) inv.moveSelection(0, 1);
+                    // ENTER
+                    else if (keyPressed->scancode == sf::Keyboard::Scancode::Enter)
+                        inv.toggleItem(*player);
+                }
 				
             }
             else if (auto* mb = event->getIf<sf::Event::MouseButtonPressed>())
@@ -185,6 +215,19 @@ int main()
             player->attackUpdate(sf::Mouse::getPosition(window), player->getPosition());
             //Collision section
             sf::FloatRect playerBoundingBox = player->getBoundingBox();
+            //***********************************TO_DO*************************************************************
+            for (int i = 0;i< globalMapItems.size();i++)
+            {
+                if (const std::optional intersection = playerBoundingBox.findIntersection(globalMapItems[i]->getBoundingBox()))
+                {
+                    
+                    player->getInventory().addItem(std::move(globalMapItems[i]));
+                    globalMapItems.erase(globalMapItems.begin() + i);
+                    i--;
+                }
+            }
+            
+            
             for (int i = 0;i < Flys.size(); i++)
             {
                 sf::FloatRect flyBoundingBox = Flys[i]->getBoundingBox();
@@ -224,9 +267,24 @@ int main()
             {
                 if (Flys[i]->getHp() <= 0)
                 {
-
+                    auto item = std::make_unique<MagicWand>();
+                    item->getSprite().setPosition(Flys[i]->getPosition());
+                    globalMapItems.push_back(std::move(item));
+                    expBarCounterFloat += 20;
+                    player->setXp(5);
+                    if (player->getXp() >= player->getTreshold())
+                    {
+                        //**************************************************TO_DO***********************************************************
+                        player->setLevel(1);
+                        player->setDamage(0.25f);
+                        player->setArmor(0.25f);
+                        expBarCounterFloat = 0;
+                        player->setTreshold(100);
+                    }
+                    expBarCounter.setSize(sf::Vector2f(expBarCounterFloat,16));
                     Flys.erase(Flys.begin() + i);
-					waveCounter++;
+                    //waveCounter++;
+
                 }
             }
             //end game section
@@ -246,6 +304,8 @@ int main()
         window.draw(playerHpText);
         if (gameState == GameState::Playing)
         {
+            window.draw(expBar);
+            window.draw(expBarCounter);
             player->draw(window);
             for (int i = 0;i < Flys.size(); i++)
             {
@@ -270,6 +330,11 @@ int main()
             {
                 showDamageTextMonster = false;
             }
+
+            for (auto& item : globalMapItems)
+            {
+                item->draw(window);
+            }
         }
         else if(gameState == GameState::GameOver)
         {
@@ -284,6 +349,10 @@ int main()
                 Flys[i]->draw(window);
             }
 			player->attackDraw(window);	
+            
+            player->drawEQ(window);
+            
+
 		}else if(gameState == GameState::WaveUpgrade)
 		{
 			window.draw(WaveUpgradeTestScreen);

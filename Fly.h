@@ -9,8 +9,8 @@ public:
 	void move(sf::Vector2f playerPosition) override;
 	unsigned int getId() override;
 	sf::FloatRect getBoundingBox() override;
-	void setHp(unsigned int damage) override;
-	unsigned int getHp() override;
+	void setHp(float damage) override;
+	float getHp() override;
 	unsigned int getDamage() override;
 	bool canDealDamage() override;
 	void notifyDamageDealt() override;
@@ -19,7 +19,7 @@ private:
 	static unsigned int		nextID;
 	static sf::Texture		sharedTexture;
 	unsigned int			ID;
-	unsigned int			hp{ 10 };
+	float					hp{ 10 };
 	sf::Sprite				sprite{ sharedTexture };
 	unsigned int			currentFrame{ 0 };
 	sf::Clock				animationClock;

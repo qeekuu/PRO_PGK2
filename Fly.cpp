@@ -74,12 +74,12 @@ sf::FloatRect Fly::getBoundingBox()
     return this->sprite.getGlobalBounds();
 }
 
-void Fly::setHp(unsigned int damage)
+void Fly::setHp(float damage)
 {
     this->hp = hp - damage;
 }
 
-unsigned int Fly::getHp()
+float Fly::getHp()
 {
     return this->hp;
 }

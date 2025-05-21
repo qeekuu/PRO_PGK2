@@ -11,10 +11,10 @@ public:
     void setActive();
     bool isExpired(float maxLifeTime);
     sf::FloatRect getBoundingBox();
-    unsigned int getDamage();
-	void setDamage(float value);
+    float getDamage();
+    void setDamage(float value);
 private:
-    unsigned int    damage{ 2 };
+    float           damage{ 2 };
     sf::Texture     texture;
     sf::Sprite      sprite{ texture };
     bool            active{ false };

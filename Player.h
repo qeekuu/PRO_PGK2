@@ -2,7 +2,11 @@
 #include <SFML/Graphics.hpp>
 #include <stdexcept>
 #include "MagicAttack.h"
-
+#include <iostream>
+#include <algorithm>
+#include <map>
+#include "EquipmentType.h"
+#include "Inventory.h"
 enum class DIR : int
 {
     LEFT,
@@ -10,7 +14,7 @@ enum class DIR : int
     UP,
     DOWN
 };
-
+class Items;
 class Player
 {
 public:
@@ -26,21 +30,37 @@ public:
     void attackStart(sf::Vector2i mousePos, sf::Vector2f playerPos);
     void attackDraw(sf::RenderWindow& window);
     std::vector<std::unique_ptr<MagicAttack>>& magicAttackVector();
-    int getHp();
+    float getHp();
     void setHp(unsigned int damage);
     sf::Sprite getSprite();
+    void drawEQ(sf::RenderWindow& window);
+    Inventory& getInventory();
+    std::map<EquipmentType, std::unique_ptr<Items>> &getEquipment();
+    void setDamage(float value);
+    void setArmor(float value);
+    void setLevel(float value);
+    void setTreshold(float value);
+    int getLevel();
+    int getTreshold();
+    float getXp();
+    void setXp(float value);
 private:
-    int             hp{ 100 };
-	int				armor { 1 };
-    sf::Texture     texture;
-    sf::Sprite      sprite{ texture };
-    DIR             direction{ DIR::DOWN };
-    unsigned int    currentFrame{ 0 };
-    sf::Clock       animationClock;
-    float           switchTime{ 0.07f };
-    unsigned int    maxFrames{ 0 };
-    float           speed = { 4.f };
-    std::vector<std::unique_ptr<MagicAttack>> MagickAttacks;
-    float           attackLifeTime{ 2.f };
-	float			playerDamage { 2.0f };
+    float                                               hp{ 100 };
+    int                                                 level{ 1 };
+	int				                                    armor { 1 };
+    float                                               characterLevelTreshold{ 100 };
+    float                                               xp{ 0 };
+    float			                                    playerDamage{ 2.0f };
+    sf::Texture                                         texture;
+    sf::Sprite                                          sprite{ texture };
+    DIR                                                 direction{ DIR::DOWN };
+    unsigned int                                        currentFrame{ 0 };
+    sf::Clock                                           animationClock;
+    float                                               switchTime{ 0.07f };
+    unsigned int                                        maxFrames{ 0 };
+    float                                               speed = { 4.f };
+    std::vector<std::unique_ptr<MagicAttack>>           MagickAttacks;
+    float                                               attackLifeTime{ 2.f };
+    Inventory                                           EQ;
+    std::map<EquipmentType, std::unique_ptr<Items>>     playerEQ;
 };

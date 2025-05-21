@@ -79,7 +79,7 @@ sf::FloatRect MagicAttack::getBoundingBox()
     return this->sprite.getGlobalBounds();
 }
 
-unsigned int MagicAttack::getDamage()
+float MagicAttack::getDamage()
 {
     return this->damage;
 }
@@ -88,3 +88,4 @@ void MagicAttack::setDamage(float value)
 {
 	this->damage = value;
 }
+
