@@ -57,11 +57,9 @@ void Inventory::addItem(std::unique_ptr<Items> item)
 {
     if (EQ.size() >= 20)
     {
-        std::cout << "Ekwipunek pelny!\n";
         return;
     }
     EQ.push_back(std::move(item));
-    std::cout << "Dodano przedmiot do ekwipunku\n";
 }
 
 
@@ -93,11 +91,15 @@ void Inventory::toggleItem(Player& player)
         player.getInventory().EQ.erase(EQ.begin() + selectedSlot);
         player.setDamage(player.getEquipment().find(EquipmentType::WEAPON)->second->getDamage());
     }
-    else 
+    else
     {
         std::swap(EQ[selectedSlot], it->second);
     }
     
-    //**********************************************TO_DO***************************************************:
-    std::cout << "Toggle item in slot " << selectedSlot << "\n";
+
+}
+
+std::vector<std::unique_ptr<Items>> &Inventory::getEQ()
+{
+    return this->EQ;
 }

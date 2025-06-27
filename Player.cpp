@@ -78,7 +78,7 @@ void Player::attackUpdate(sf::Vector2i mousePos, sf::Vector2f playerPos)
     MagickAttacks.erase(std::remove_if(MagickAttacks.begin(),MagickAttacks.end(),[this](const std::unique_ptr<MagicAttack>& atk) {return atk->isExpired(attackLifeTime);}),MagickAttacks.end());
 }
 
-void Player::attackStart(sf::Vector2i mousePos,sf::Vector2f playerPos)
+void Player::attackStart(sf::Vector2f mousePos,sf::Vector2f playerPos)
 {
     std::unique_ptr<MagicAttack> attack = std::make_unique<MagicAttack>();
     attack->start(mousePos, playerPos);
@@ -131,7 +131,7 @@ std::vector<std::unique_ptr<MagicAttack>>& Player::magicAttackVector()
 
 void Player::setHp(unsigned int damage)
 {
-    this->hp = hp - damage;
+    this->hp -= damage;
 }
 
 float Player::getHp()
@@ -189,3 +189,43 @@ void Player::setXp(float value)
 {
     this->xp += value;
 }
+
+void Player::setSpeed(float value)
+{
+    this->speed += value;
+}
+
+void Player::setHPUpgrade(float value)
+{
+    this->hp += value;
+}
+
+void Player::reset()
+{
+    this->armor = 1;
+    this->hp = 100;
+    this->xp = 0;
+    this->level = 1;
+    this->characterLevelTreshold = 100;
+    this->playerDamage = 2.0f;
+    this->speed = 4.f;
+}
+
+float                                               hp{ 100 };
+int                                                 level{ 1 };
+int				                                    armor{ 1 };
+float                                               characterLevelTreshold{ 100 };
+float                                               xp{ 0 };
+float			                                    playerDamage{ 2.0f };
+sf::Texture                                         texture;
+sf::Sprite                                          sprite{ texture };
+DIR                                                 direction{ DIR::DOWN };
+unsigned int                                        currentFrame{ 0 };
+sf::Clock                                           animationClock;
+float                                               switchTime{ 0.07f };
+unsigned int                                        maxFrames{ 0 };
+float                                               speed = { 4.f };
+std::vector<std::unique_ptr<MagicAttack>>           MagickAttacks;
+float                                               attackLifeTime{ 2.f };
+Inventory                                           EQ;
+std::map<EquipmentType, std::unique_ptr<Items>>     playerEQ;

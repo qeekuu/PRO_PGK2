@@ -1,30 +1,30 @@
-#include "Fly.h"
+#include "Bone.h"
 #include <iostream>
 #include <cmath>
-Fly::Fly() : ID{nextID++}
+Bone::Bone() : ID{ nextID++ }
 {
-    if (sharedTexture.getSize().x == 0) 
+    if (sharedTexture.getSize().x == 0)
     {
-        if (!sharedTexture.loadFromFile("greyfly_spritesheet.png"))
+        if (!sharedTexture.loadFromFile("SKELETON.png"))
         {
             throw std::runtime_error("Error during loading a texture");
         }
         sharedTexture.setSmooth(true);
     }
 
-    this->maxFrames = this->sharedTexture.getSize().x / 16;
+    this->maxFrames = this->sharedTexture.getSize().x / 32;
     this->sprite.setTexture(this->sharedTexture);
-    this->sprite.setTextureRect({ {0, 0}, {16, 16} });
-    this->sprite.setOrigin({ 8.f, 8.f });
+    this->sprite.setTextureRect({ {0, 0}, {32, 61} });
+    this->sprite.setOrigin({16.f, 30.5f });
     this->sprite.setPosition({ 300,300 });
     this->animationClock.restart();
 }
-void Fly::draw(sf::RenderWindow& window)
+void Bone::draw(sf::RenderWindow& window)
 {
-	window.draw(sprite);
+    window.draw(sprite);
 }
 
-void Fly::update(sf::Vector2f playerPosition)
+void Bone::update(sf::Vector2f playerPosition)
 {
     sf::Vector2f playerPos = playerPosition;
     sf::Vector2f monsterPos = sprite.getPosition();
@@ -33,20 +33,20 @@ void Fly::update(sf::Vector2f playerPosition)
         this->currentFrame = (this->currentFrame + 1) % this->maxFrames;
         this->animationClock.restart();
     }
-    if (monsterPos.x < playerPos.x)
+    if (monsterPos.x > playerPos.x)
     {
-        this->sprite.setTextureRect({ {static_cast<int>(this->currentFrame) * 16, 0}, {16, 16} });
+        this->sprite.setTextureRect({ {static_cast<int>(this->currentFrame) * 32, 0}, {32, 61} });
     }
     else
     {
-        this->sprite.setTextureRect({ {static_cast<int>(this->currentFrame) * 16, 16}, {16, 16} });
+        this->sprite.setTextureRect({ {static_cast<int>(this->currentFrame) * 32, 61}, {32, 61} });
     }
-    
 
-    
+
+
 }
 
-void Fly::move(sf::Vector2f playerPosition)
+void Bone::move(sf::Vector2f playerPosition)
 {
     sf::Vector2f playerPos = playerPosition;
     sf::Vector2f monsterPos = sprite.getPosition();
@@ -64,56 +64,56 @@ void Fly::move(sf::Vector2f playerPosition)
     }
 }
 
-unsigned int Fly::getId()
+unsigned int Bone::getId()
 {
     return this->ID;
 }
 
-sf::FloatRect Fly::getBoundingBox()
+sf::FloatRect Bone::getBoundingBox()
 {
     return this->sprite.getGlobalBounds();
 }
 
-void Fly::setHp(float damage)
+void Bone::setHp(float damage)
 {
     this->hp = hp - damage;
 }
 
-float Fly::getHp()
+float Bone::getHp()
 {
     return this->hp;
 }
 
-unsigned int Fly::getDamage()
+unsigned int Bone::getDamage()
 {
     return this->damage;
 }
 
-bool Fly::canDealDamage()
+bool Bone::canDealDamage()
 {
     return damageClock.getElapsedTime().asSeconds() >= DAMAGE_COOLDOWN;
 }
 
-void Fly::notifyDamageDealt() 
+void Bone::notifyDamageDealt()
 {
     damageClock.restart();
 }
 
-sf::Vector2f Fly::getPosition()
+sf::Vector2f Bone::getPosition()
 {
     return this->sprite.getPosition();
 }
 
-void Fly::setPosition(sf::Vector2f pos)
+void Bone::setPosition(sf::Vector2f pos)
 {
     this->sprite.setPosition(pos);
 }
 
-void Fly::setID(unsigned int id) 
+void Bone::setID(unsigned int id) 
 {
     this->ID = id;
 }
 
-unsigned int Fly::nextID{ 1 };
-sf::Texture Fly::sharedTexture;
-const float Fly::DAMAGE_COOLDOWN{ 2.f };
+unsigned int Bone::nextID{ 1 };
+sf::Texture Bone::sharedTexture;
+const float Bone::DAMAGE_COOLDOWN{ 2.f };

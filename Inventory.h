@@ -16,6 +16,7 @@ public:
 	void addItem(std::unique_ptr<Items> item);
 	void moveSelection(int dRow, int dCol);
 	void toggleItem(Player& player);
+	std::vector<std::unique_ptr<Items>> &getEQ();
 private:
 	std::vector<std::unique_ptr<Items>> EQ;
 	int selectedSlot = 0;

@@ -15,7 +15,7 @@ MagicAttack::MagicAttack()
     sprite.setOrigin({ 32.f,32.f });
 }
 
-void MagicAttack::start(sf::Vector2i& mousePos, sf::Vector2f& playerPos)
+void MagicAttack::start(sf::Vector2f& mousePos, sf::Vector2f& playerPos)
 {
     sprite.setPosition(playerPos);
     active = true;

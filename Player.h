@@ -27,7 +27,7 @@ public:
     sf::Vector2f getPosition();
     sf::FloatRect getBoundingBox();
     void attackUpdate(sf::Vector2i mousePos, sf::Vector2f playerPos);
-    void attackStart(sf::Vector2i mousePos, sf::Vector2f playerPos);
+    void attackStart(sf::Vector2f mousePos, sf::Vector2f playerPos);
     void attackDraw(sf::RenderWindow& window);
     std::vector<std::unique_ptr<MagicAttack>>& magicAttackVector();
     float getHp();
@@ -40,10 +40,13 @@ public:
     void setArmor(float value);
     void setLevel(float value);
     void setTreshold(float value);
+    void setXp(float value);
+    void setSpeed(float value);
+    void setHPUpgrade(float value);
     int getLevel();
     int getTreshold();
     float getXp();
-    void setXp(float value);
+    void reset();
 private:
     float                                               hp{ 100 };
     int                                                 level{ 1 };

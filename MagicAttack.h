@@ -5,7 +5,7 @@ class MagicAttack
 {
 public:
     MagicAttack();
-    void start(sf::Vector2i& mousePos, sf::Vector2f& playerPos);
+    void start(sf::Vector2f& mousePos, sf::Vector2f& playerPos);
     void update(sf::Vector2i& mousePos, sf::Vector2f& playerPos);
     void draw(sf::RenderWindow& window);
     void setActive();
